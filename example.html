@@ -1,0 +1,37 @@
+<script>
+	class MyCounter extends HTMLElement {
+		static observedAttributes = ['count'];
+
+		constructor() {
+			super();
+			this.attachShadow({mode: 'open', delegatesFocus: true});
+
+			this.shadowRoot.innerHTML = `
+				<button>
+					<slot>Counter</slot>: <span>0</span>
+				</button>
+			`;
+
+		}
+
+		connectedCallback() {
+			const button = this.shadowRoot.querySelector('button');
+			button.addEventListener('click', (event) => {
+				const newCount = parseInt(this.getAttribute('count')) + 1;
+				this.setAttribute('count', newCount);
+			});
+		}
+
+		attributeChangedCallback(name, oldValue, newValue) {
+			if (name === 'count') {
+				const span = this.shadowRoot.querySelector('span');
+				span.textContent = newValue;
+			}
+		}
+	}
+
+	customElements.define('my-counter', MyCounter);
+</script>
+
+<my-counter id="a" count="5"></my-counter>
+<my-counter id="b" count="5">Testing</my-counter>
